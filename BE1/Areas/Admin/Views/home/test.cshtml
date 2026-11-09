@@ -1,0 +1,40 @@
+﻿@model IEnumerable<BE1.Models.viewmodel.ThongKeViewModel>
+@{
+    ViewBag.Title = "Thống Kê Hàng Hóa";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="panel panel-default" style="margin-top: 20px;">
+    <div class="panel-heading" style="background-color: #e2f0d9; color: #385723; font-weight: bold; font-size: 24px; text-transform: uppercase;">
+        THỐNG KÊ HÀNG HÓA TỪNG LOẠI
+    </div>
+    <div class="panel-body">
+        <table class="table table-bordered table-striped" style="border: 1px solid #ddd;">
+            <thead>
+                <tr style="background-color: #e2f0d9; color: #385723;">
+                    <th style="font-weight: bold;">LOẠI HÀNG</th>
+                    <th style="font-weight: bold;">SỐ LƯỢNG</th>
+                    <th style="font-weight: bold;">GIÁ CAO NHẤT</th>
+                    <th style="font-weight: bold;">GIÁ THẤP NHẤT</th>
+                    <th style="font-weight: bold;">GIÁ TRUNG BÌNH</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.TenLoai</td>
+                        <td>@item.SoLuong</td>
+                        <td>@string.Format("${0:N2}", item.GiaThapNhat)</td>
+                        <td>@string.Format("${0:N2}", item.GiaCaoNhat)</td>
+                        <td>@string.Format("${0:N2}", item.GiaTrungBinh)</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <div style="margin-top: 15px;">
+            <a href="@Url.Action("Chart", "home")" class="btn btn-default" style="border: 1px solid #ccc; background-color: #fff;">Xem biểu đồ</a>
+        </div>
+    </div>
+</div>

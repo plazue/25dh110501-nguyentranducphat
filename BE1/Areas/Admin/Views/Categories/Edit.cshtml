@@ -1,0 +1,97 @@
+﻿@model BE1.Models.Category
+@{
+    ViewBag.Title = "Edit";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<style>
+    .bg-title {
+        background-color: #d4edda; /* Xanh lá nhạt đồng bộ với các trang khác */
+        font-size: 24px;
+        padding: 10px 15px;
+        margin-bottom: 20px;
+        color: #000;
+    }
+
+    .edit-container {
+        padding: 0 15px;
+    }
+
+    .edit-form-group {
+        display: flex;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+        .edit-form-group label {
+            font-weight: normal;
+            width: 120px;
+            margin-right: 20px;
+            margin-bottom: 0;
+        }
+
+        .edit-form-group .input-box {
+            width: 300px;
+            padding: 6px 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+    /* Tùy chỉnh nút Lưu và Quay lại danh sách */
+    .btn-custom-save {
+        background-color: #2b6cb0;
+        color: white;
+        padding: 6px 20px;
+        border: none;
+        border-radius: 3px;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-block;
+        margin-right: 5px;
+    }
+
+        .btn-custom-save:hover {
+            background-color: #1a4971;
+            color: white;
+        }
+
+    .btn-custom-back {
+        background-color: #2b6cb0;
+        color: white;
+        padding: 6px 16px;
+        border-radius: 3px;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+        .btn-custom-back:hover {
+            background-color: #1a4971;
+            color: white;
+        }
+</style>
+
+<h2 class="bg-title">CẬP NHẬT DANH MỤC</h2>
+
+<div class="edit-container">
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="form-horizontal">
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            @Html.HiddenFor(model => model.CategoryID)
+
+            <div class="edit-form-group">
+                @Html.LabelFor(model => model.CategoryName, "Tên danh mục")
+                <div>
+                    @Html.EditorFor(model => model.CategoryName, new { htmlAttributes = new { @class = "input-box" } })
+                    @Html.ValidationMessageFor(model => model.CategoryName, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group" style="margin-left: 140px;">
+                <input type="submit" value="Lưu" class="btn-custom-save" />
+                @Html.ActionLink("Quay lại danh sách", "Index", null, new { @class = "btn-custom-back" })
+            </div>
+        </div>
+    }
+</div>

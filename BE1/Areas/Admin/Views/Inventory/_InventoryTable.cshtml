@@ -1,0 +1,123 @@
+﻿
+@model IEnumerable<BE1.Models.Product>
+
+<div class="table-responsive mb-4">
+    <table class="admin-table">
+        <thead>
+            <tr>
+                <th style="width: 70px;" class="text-center">Hình ảnh</th>
+                <th>Tên sản phẩm</th>
+                <th>Danh mục</th>
+                <th class="text-end">Giá bán</th>
+                <th class="text-center" style="width: 200px;">Số lượng nhập thêm</th>
+                <th class="text-center">Tồn kho hiện tại</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null && Model.Any())
+            {
+                foreach (var item in Model)
+                {
+                    <tr id="product-row-@item.ProductID">
+                        <td class="text-center">
+                            @if (!string.IsNullOrEmpty(item.ProductImage))
+                            {
+                                <img src="@Url.Content(item.ProductImage)" alt="" style="width: 40px; height: 40px; object-fit: cover; border-radius: 6px;" />
+                            }
+                            else
+                            {
+                                <span class="text-muted">No img</span>
+                            }
+                        </td>
+                        <td class="fw-semibold">@item.ProductName</td>
+                        <td>@(item.Category != null ? item.Category.CategoryName : "N/A")</td>
+                        <td class="text-end fw-bold text-primary">@string.Format("{0:N0} đ", item.ProductPrice)</td>
+
+                        <!-- Ô NHẬP SỐ LƯỢNG & NÚT CẬP NHẬT -->
+                        <td class="text-center">
+                            <div style="display: inline-flex; align-items: center; gap: 5px;">
+                                <div class="quantity-control-group" style="display: inline-flex; align-items: center; border: 1px solid #cbd5e1; border-radius: 6px; overflow: hidden; background: #fff;">
+                                    <button type="button" class="btn-qty-minus" onclick="adjustQty(this, -1)" style="background: #f1f5f9; border: none; padding: 4px 8px; cursor: pointer; font-weight: bold; color: #475569;">-</button>
+                                    <input type="number" value="1" min="1" class="item-quantity-input" style="width: 40px; text-align: center; border: none; outline: none; font-size: 13px; font-weight: 600;" />
+                                    <button type="button" class="btn-qty-plus" onclick="adjustQty(this, 1)" style="background: #f1f5f9; border: none; padding: 4px 8px; cursor: pointer; font-weight: bold; color: #475569;">+</button>
+                                </div>
+                                <button type="button" class="btn btn-sm btn-primary" onclick="updateStock(@item.ProductID, this)" style="padding: 4px 10px; font-size: 12px; font-weight: 600; border-radius: 6px;">Cập nhật</button>
+                            </div>
+                        </td>
+
+                        <td class="text-center stock-display">
+                            @if (item.Quantity > 0)
+                            {
+                                <span class="badge-ton">@item.Quantity</span>
+                            }
+                            else
+                            {
+                                <span class="badge-het">0 (Cần nhập)</span>
+                            }
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="6" class="text-center text-muted py-3">Không có sản phẩm nào trong danh mục này.</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<script>
+    // Hàm xử lý tăng giảm số lượng trực tiếp trên giao diện
+    function adjustQty(button, amount) {
+        var wrapper = button.parentElement;
+        var input = wrapper.querySelector('.item-quantity-input');
+        var currentValue = parseInt(input.value) || 1;
+        var newValue = currentValue + amount;
+        if (newValue < 1) newValue = 1;
+        input.value = newValue;
+    }
+
+    // Hàm gọi Fetch API cập nhật kho xuống cơ sở dữ liệu
+    function updateStock(productId, btn) {
+        var row = document.getElementById('product-row-' + productId);
+        var input = row.querySelector('.item-quantity-input');
+        var quantity = parseInt(input.value) || 0;
+
+        if (quantity <= 0) {
+            alert("Vui lòng nhập số lượng lớn hơn 0!");
+            return;
+        }
+
+        var formData = new URLSearchParams();
+        formData.append('id', productId);
+        formData.append('quantity', quantity);
+
+        fetch('@Url.Action("UpdateStock", "Inventory", new { area = "Admin" })', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+            },
+            body: formData.toString()
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                var stockTd = row.querySelector('.stock-display');
+                if (data.newStock > 0) {
+                    stockTd.innerHTML = `<span class="badge-ton">${data.newStock}</span>`;
+                } else {
+                    stockTd.innerHTML = `<span class="badge-het">0 (Cần nhập)</span>`;
+                }
+                input.value = 1; // Reset ô nhập về 1
+            } else {
+                alert(data.message || "Có lỗi xảy ra khi cập nhật tồn kho.");
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert("Không thể kết nối đến máy chủ.");
+        });
+    }
+</script>

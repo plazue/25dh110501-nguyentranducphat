@@ -1,0 +1,115 @@
+﻿@model BE1.Models.Order
+
+@{
+    ViewBag.Title = "Xóa đơn hàng";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<style>
+    .delete-container {
+        max-width: 750px;
+        margin: 20px auto;
+        background: #fff;
+        padding: 30px;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+
+    .delete-header {
+        background-color: #f8d7da;
+        color: #721c24;
+        padding: 12px 20px;
+        font-size: 20px;
+        font-weight: bold;
+        border-radius: 4px;
+        margin-bottom: 20px;
+    }
+
+    .warning-text {
+        color: #dc3545;
+        font-weight: 600;
+        margin-bottom: 20px;
+    }
+
+    .dl-horizontal dt {
+        text-align: left;
+        width: 180px;
+        color: #555;
+        font-weight: 600;
+        padding-bottom: 8px;
+    }
+
+    .dl-horizontal dd {
+        margin-left: 200px;
+        padding-bottom: 8px;
+        color: #333;
+    }
+
+    .btn-danger-custom {
+        background-color: #dc3545;
+        color: white;
+        padding: 10px 25px;
+        border: none;
+        border-radius: 4px;
+        font-weight: 500;
+    }
+
+        .btn-danger-custom:hover {
+            background-color: #c82333;
+            color: white;
+        }
+
+    .back-link {
+        margin-left: 15px;
+        text-decoration: none;
+        color: #6c757d;
+    }
+
+        .back-link:hover {
+            color: #343a40;
+            text-decoration: underline;
+        }
+</style>
+
+<div class="delete-container">
+    <div class="delete-header">
+        XÁC NHẬN XÓA ĐƠN HÀNG
+    </div>
+
+    <p class="warning-text">Bạn có chắc chắn muốn xóa đơn hàng này không? Thao tác này không thể hoàn tác.</p>
+
+    <div>
+        <dl class="dl-horizontal">
+            <dt>Khách hàng</dt>
+            <dd><strong>@(Model.Customer != null ? Model.Customer.CustomerName : "N/A")</strong></dd>
+
+            <dt>Ngày đặt</dt>
+            <dd>@(Model.OrderDate != null ? Model.OrderDate.ToString("dd/MM/yyyy HH:mm") : "")</dd>
+
+            <dt>Tổng tiền</dt>
+            <dd><span style="color: #28a745; font-weight: bold;">@string.Format("{0:N0} đ", Model.TotalAmount)</span></dd>
+
+            <dt>Trạng thái thanh toán</dt>
+            <dd>@Model.PaymentStatus</dd>
+
+            <dt>Địa chỉ giao</dt>
+            <dd>@Model.ShippingAddress</dd>
+
+            <dt>Phương thức vận chuyển</dt>
+            <dd>@Model.DeliveryMethod</dd>
+
+            <dt>Phương thức thanh toán</dt>
+            <dd>@Model.PaymentMethod</dd>
+        </dl>
+
+        @using (Html.BeginForm())
+        {
+            @Html.AntiForgeryToken()
+
+            <div class="form-actions no-color" style="margin-top: 25px;">
+                <input type="submit" value="Xóa đơn hàng" class="btn btn-danger-custom" />
+                @Html.ActionLink("Quay lại danh sách", "Index", null, new { @class = "back-link" })
+            </div>
+        }
+    </div>
+</div>

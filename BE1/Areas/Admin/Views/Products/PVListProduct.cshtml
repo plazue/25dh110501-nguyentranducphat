@@ -1,0 +1,39 @@
+﻿@model IEnumerable<BE1.Models.Product>
+
+@{
+    ViewBag.Title = "Danh sách sản phẩm";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml"; // Hoặc layout của bạn
+}
+
+<h2>Danh sách sản phẩm</h2>
+
+<table class="table">
+    <tr>
+        <th>@Html.DisplayNameFor(model => model.ProductImage)</th>
+        <th>@Html.DisplayNameFor(model => model.ProductName)</th>
+        <th>@Html.DisplayNameFor(model => model.ProductPrice)</th>
+        <th>@Html.DisplayNameFor(model => model.Category.CategoryName)</th>
+        <th></th>
+    </tr>
+
+    @if (Model != null && Model.Any())
+    {
+        foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    <!-- Sửa lại: Bỏ chữ ~/Images/ thừa vì item.ProductImage đã chứa /Images/ rồi -->
+                    <img src="@item.ProductImage" width="150" height="150" style="object-fit: cover;" />
+                </td>
+                <td>@Html.DisplayFor(modelItem => item.ProductName)</td>
+                <td>@Html.DisplayFor(modelItem => item.ProductPrice)</td>
+                <td>@Html.DisplayFor(modelItem => item.Category.CategoryName)</td>
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { id = item.ProductID }) |
+                    @Html.ActionLink("Details", "Details", new { id = item.ProductID }) |
+                    @Html.ActionLink("Delete", "Delete", new { id = item.ProductID })
+                </td>
+            </tr>
+        }
+    }
+</table>

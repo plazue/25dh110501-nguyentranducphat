@@ -1,0 +1,362 @@
+﻿@model BE1.Models.Customer
+
+@{
+    ViewBag.Title = "Chi tiết khách hàng & Đơn hàng - Lubu Store";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="detail-container">
+    <div class="detail-header">
+        <h2>Hồ Sơ Khách Hàng & Danh Sách Đơn Hàng</h2>
+        <p>Quản lý thông tin chi tiết và theo dõi lịch sử mua hàng của tài khoản</p>
+    </div>
+
+    <!-- THÔNG TIN CHI TIẾT KHÁCH HÀNG -->
+    <div class="section-card">
+        <h3 class="section-title">Thông tin tài khoản</h3>
+        <div class="detail-grid">
+            <div class="detail-item">
+                <span class="detail-label">Tên đăng nhập</span>
+                <span class="detail-value highlight">@Model.Username</span>
+            </div>
+
+            <div class="detail-item">
+                <span class="detail-label">Họ và tên</span>
+                <span class="detail-value">@Model.CustomerName</span>
+            </div>
+
+            <div class="detail-item">
+                <span class="detail-label">Địa chỉ Email</span>
+                <span class="detail-value">@Model.CustomerEmail</span>
+            </div>
+
+            <div class="detail-item">
+                <span class="detail-label">Số điện thoại</span>
+                <span class="detail-value">@(string.IsNullOrEmpty(Model.CustomerPhone) ? "Chưa cập nhật" : Model.CustomerPhone)</span>
+            </div>
+
+            <div class="detail-item full-width">
+                <span class="detail-label">Địa chỉ nhận hàng mặc định</span>
+                <span class="detail-value">@(string.IsNullOrEmpty(Model.CustomerAddress) ? "Chưa cập nhật" : Model.CustomerAddress)</span>
+            </div>
+
+            <div class="detail-item">
+                <span class="detail-label">Quyền hạn</span>
+                <span class="detail-value">
+                    <span class="badge-role @(Model.Role == "Admin" ? "badge-admin" : "badge-customer")">
+                        @(string.IsNullOrEmpty(Model.Role) ? "Customer" : Model.Role)
+                    </span>
+                </span>
+            </div>
+
+            <div class="detail-item">
+                <span class="detail-label">Trạng thái tài khoản</span>
+                <span class="detail-value">
+                    @if (Model.IsActive == true)
+                    {
+                        <span class="badge-status badge-active">Hoạt động</span>
+                    }
+                    else
+                    {
+                        <span class="badge-status badge-locked">Đã khóa</span>
+                    }
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <!-- DANH SÁCH ĐƠN HÀNG CỦA KHÁCH HÀNG NÀY -->
+    <div class="section-card" style="margin-top: 30px;">
+        <h3 class="section-title">
+            Danh sách đơn hàng đã đặt
+            <span class="order-count-badge">@(Model.Orders != null ? Model.Orders.Count : 0) đơn hàng</span>
+        </h3>
+
+        @if (Model.Orders != null && Model.Orders.Any())
+        {
+            <div class="table-responsive">
+                <table class="table-custom">
+                    <thead>
+                        <tr>
+                            <th>Mã ĐH</th>
+                            <th>Ngày đặt</th>
+                            <th>Tổng tiền</th>
+                            <th>Thanh toán</th>
+                            <th>Trạng thái đơn</th>
+                            <th style="text-align: center;">Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var order in Model.Orders.OrderByDescending(o => o.OrderDate))
+                        {
+                            <tr>
+                                <td style="font-weight: 600; color: #2563eb;">#@order.OrderID</td>
+                                @(order.OrderDate != default(DateTime) ? order.OrderDate.ToString("dd/MM/yyyy HH:mm") : "N/A")
+                                <td style="font-weight: 700; color: #dc2626;">@string.Format("{0:N0} ₫", order.TotalAmount)</td>
+                                <td>@order.PaymentMethod</td>
+                                <td>
+                                    <span class="badge-status @(order.PaymentStatus == "Đã hủy" ? "badge-locked" : (order.PaymentStatus == "Đang giao hàng" ? "badge-info" : "badge-warning"))">
+                                        @(string.IsNullOrEmpty(order.PaymentStatus) ? "Chờ xử lý" : order.PaymentStatus)
+                                    </span>
+                                </td>
+                                <td style="text-align: center;">
+                                    @Html.ActionLink("Xem", "Edit", "Orders", new { area = "Admin", id = order.OrderID }, new { @class = "btn-view-order" })
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <div class="empty-orders">
+                <i class="fa-solid fa-box-open" style="font-size: 32px; color: #cbd5e1; margin-bottom: 8px;"></i>
+                <p>Khách hàng này chưa có đơn hàng nào trong hệ thống.</p>
+            </div>
+        }
+    </div>
+
+    <div class="detail-actions" style="margin-top: 25px;">
+        @Html.ActionLink("← Quay lại danh sách khách hàng", "Index1", null, new { @class = "btn-back" })
+    </div>
+</div>
+
+<style>
+    .detail-container {
+        max-width: 950px;
+        margin: 20px auto;
+        padding: 0 15px;
+    }
+
+    .detail-header {
+        margin-bottom: 24px;
+    }
+
+        .detail-header h2 {
+            font-size: 22px;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 4px;
+        }
+
+        .detail-header p {
+            color: #64748b;
+            font-size: 13px;
+        }
+
+    .section-card {
+        background: #fff;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 24px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+    }
+
+    .section-title {
+        font-size: 16px;
+        font-weight: 700;
+        color: #1e293b;
+        margin-bottom: 18px;
+        border-bottom: 1px solid #f1f5f9;
+        padding-bottom: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .order-count-badge {
+        background: #e0f2fe;
+        color: #0369a1;
+        font-size: 12px;
+        padding: 2px 10px;
+        border-radius: 20px;
+        font-weight: 600;
+    }
+
+    .detail-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+    }
+
+    .detail-item {
+        background: #f8fafc;
+        border: 1px solid #f1f5f9;
+        border-radius: 8px;
+        padding: 12px 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+        .detail-item.full-width {
+            grid-column: span 2;
+        }
+
+    .detail-label {
+        font-size: 11px;
+        text-transform: uppercase;
+        font-weight: 600;
+        color: #64748b;
+        letter-spacing: 0.5px;
+    }
+
+    .detail-value {
+        font-size: 14px;
+        color: #0f172a;
+        font-weight: 500;
+    }
+
+        .detail-value.highlight {
+            color: #2563eb;
+            font-weight: 600;
+        }
+
+    /* Bảng danh sách đơn hàng */
+    .table-responsive {
+        width: 100%;
+        overflow-x: auto;
+    }
+
+    .table-custom {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13px;
+        text-align: left;
+    }
+
+        .table-custom th {
+            background: #f8fafc;
+            color: #475569;
+            font-weight: 600;
+            padding: 10px 12px;
+            border-bottom: 2px solid #e2e8f0;
+            text-transform: uppercase;
+            font-size: 11px;
+            letter-spacing: 0.5px;
+        }
+
+        .table-custom td {
+            padding: 12px;
+            border-bottom: 1px solid #f1f5f9;
+            color: #334155;
+        }
+
+        .table-custom tr:hover {
+            background-color: #f8fafc;
+        }
+
+    .empty-orders {
+        text-align: center;
+        padding: 30px;
+        color: #64748b;
+        font-size: 13px;
+    }
+
+    /* Badges */
+    .badge-role {
+        padding: 3px 8px;
+        border-radius: 6px;
+        font-size: 11px;
+        font-weight: 600;
+        display: inline-block;
+    }
+
+    .badge-admin {
+        background: #dbeafe;
+        color: #1d4ed8;
+    }
+
+    .badge-customer {
+        background: #f1f5f9;
+        color: #475569;
+    }
+
+    .badge-status {
+        padding: 3px 8px;
+        border-radius: 6px;
+        font-size: 11px;
+        font-weight: 600;
+        display: inline-block;
+    }
+
+    .badge-active {
+        background: #dcfce7;
+        color: #15803d;
+    }
+
+    .badge-locked {
+        background: #fee2e2;
+        color: #dc2626;
+    }
+
+    .badge-info {
+        background: #e0f2fe;
+        color: #0284c7;
+    }
+
+    .badge-warning {
+        background: #fef3c7;
+        color: #d97706;
+    }
+
+    /* Buttons */
+    .btn-view-order {
+        background: #e2e8f0;
+        color: #1e293b;
+        padding: 4px 10px;
+        border-radius: 4px;
+        font-size: 12px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: background 0.2s;
+    }
+
+        .btn-view-order:hover {
+            background: #2563eb;
+            color: #fff;
+            text-decoration: none;
+        }
+
+    .detail-actions {
+        display: flex;
+        gap: 12px;
+    }
+
+    .btn-edit {
+        background-color: #2563eb;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 6px;
+        font-weight: 600;
+        font-size: 14px;
+        text-decoration: none;
+        transition: background 0.2s;
+        display: inline-block;
+    }
+
+        .btn-edit:hover {
+            background-color: #1d4ed8;
+            color: white;
+            text-decoration: none;
+        }
+
+    .btn-back {
+        background-color: #f1f5f9;
+        color: #475569;
+        padding: 10px 20px;
+        border-radius: 6px;
+        font-weight: 600;
+        font-size: 14px;
+        text-decoration: none;
+        transition: background 0.2s;
+        display: inline-block;
+    }
+
+        .btn-back:hover {
+            background-color: #e2e8f0;
+            color: #1e293b;
+            text-decoration: none;
+        }
+</style>

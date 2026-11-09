@@ -1,0 +1,137 @@
+﻿@model BE1.Models.ViewModel.SearchProductVM
+
+@{
+    ViewBag.Title = "Danh sách sản phẩm";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Quản lý sản phẩm</title>
+    <style>
+        /* Tùy chỉnh tiêu đề trang */
+        h2 {
+            color: #333;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        /* Khung tìm kiếm */
+        .search-container {
+            padding-top: 20px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        p > a[href*="Create"], .btn-create {
+            background-color: #2e6da4;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 4px;
+            text-decoration: none;
+            display: inline-block;
+            margin-bottom: 15px;
+            font-weight: 500;
+        }
+
+            p > a[href*="Create"]:hover {
+                background-color: #204d74;
+            }
+
+        /* Tùy chỉnh bảng */
+        table.table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: #fff;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+            table.table th {
+                background-color: #dff0d8;
+                color: #3c763d;
+                padding: 12px;
+                text-align: left;
+                border-bottom: 2px solid #d6e9c6;
+            }
+
+            table.table td {
+                padding: 12px;
+                vertical-align: middle;
+                border-bottom: 1px solid #ddd;
+            }
+
+            /* Hiệu ứng hover dòng */
+            table.table tr:hover {
+                background-color: #f9f9f9;
+            }
+
+            /* Hình ảnh sản phẩm */
+            table.table img {
+                border-radius: 4px;
+                object-fit: cover;
+                border: 1px solid #ddd;
+            }
+
+            /* Các nút chức năng (Sửa, Chi tiết, Xóa) */
+            table.table td a {
+                padding: 5px 10px;
+                border-radius: 3px;
+                color: white;
+                font-size: 13px;
+                text-decoration: none;
+                margin-right: 4px;
+                display: inline-block;
+            }
+
+                table.table td a[href*="Edit"] {
+                    background-color: #337ab7;
+                }
+
+                    table.table td a[href*="Edit"]:hover {
+                        background-color: #286090;
+                    }
+
+                table.table td a[href*="Details"] {
+                    background-color: #5bc0de;
+                }
+
+                    table.table td a[href*="Details"]:hover {
+                        background-color: #31b0d5;
+                    }
+
+                table.table td a[href*="Delete"] {
+                    background-color: #d9534f;
+                }
+
+                    table.table td a[href*="Delete"]:hover {
+                        background-color: #c9302c;
+                    }
+    </style>
+</head>
+
+<body>
+    <!-- Form tìm kiếm nâng cao (Tên + Khoảng giá) -->
+    @using (Html.BeginForm("Index", "Products", FormMethod.Get))
+    {
+        <div class="form-group search-container">
+            @Html.TextBoxFor(m => m.SearchTerm, new { @class = "form-control", placeholder = "Nhập tên, mô tả hoặc chủng loại sản phẩm" })
+
+            @Html.TextBoxFor(m => m.MinPrice, new { @class = "form-control", placeholder = "Nhập giá tối thiểu", type = "number" })
+
+            @Html.TextBoxFor(m => m.MaxPrice, new { @class = "form-control", placeholder = "Nhập giá tối đa", type = "number" })
+
+            <button type="submit" class="btn btn-primary">Tìm kiếm</button>
+        </div>
+    }
+
+    <h2>Danh sách sản phẩm</h2>
+    <p>@Html.ActionLink("Create New", "Create")</p>
+
+    <!-- Nhúng Partial View hiển thị danh sách sản phẩm -->
+    @Html.Partial("PVListProduct", Model.Products)
+</body>

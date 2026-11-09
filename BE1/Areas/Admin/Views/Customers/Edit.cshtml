@@ -1,0 +1,179 @@
+﻿@model BE1.Models.Customer
+
+@{
+    ViewBag.Title = "Chỉnh sửa tài khoản quản trị";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<style>
+    .form-container {
+        max-width: 750px;
+        margin: 20px auto;
+        background: #fff;
+        padding: 30px;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+
+    .form-header {
+        background-color: #d4edda;
+        color: #155724;
+        padding: 12px 20px;
+        font-size: 20px;
+        font-weight: bold;
+        border-radius: 4px;
+        margin-bottom: 25px;
+    }
+
+    .form-group {
+        margin-bottom: 18px;
+    }
+
+    .control-label {
+        font-weight: 600;
+        color: #333;
+    }
+
+    .btn-save {
+        background-color: #28a745;
+        color: white;
+        padding: 10px 25px;
+        border: none;
+        border-radius: 4px;
+        font-weight: 500;
+    }
+
+        .btn-save:hover {
+            background-color: #218838;
+            color: white;
+        }
+
+    .back-link {
+        margin-left: 15px;
+        text-decoration: none;
+        color: #6c757d;
+    }
+
+        .back-link:hover {
+            color: #343a40;
+            text-decoration: underline;
+        }
+
+    .current-avatar {
+        width: 60px;
+        height: 60px;
+        object-fit: cover;
+        border-radius: 50%;
+        margin-bottom: 8px;
+        border: 1px solid #ddd;
+    }
+</style>
+
+<div class="form-container">
+    <div class="form-header">
+        CHỈNH SỬA TÀI KHOẢN QUẢN TRỊ
+    </div>
+
+    @using (Html.BeginForm("Edit", "Customers", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="form-horizontal">
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            @Html.HiddenFor(model => model.CustomerID)
+            @Html.HiddenFor(model => model.CustomerImage) <!-- Giữ lại đường dẫn ảnh cũ nếu không đổi -->
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.CustomerName, htmlAttributes: new { @class = "control-label col-md-3" })
+                <div class="col-md-9">
+                    @Html.EditorFor(model => model.CustomerName, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.CustomerName, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.CustomerPhone, htmlAttributes: new { @class = "control-label col-md-3" })
+                <div class="col-md-9">
+                    @Html.EditorFor(model => model.CustomerPhone, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.CustomerPhone, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.CustomerEmail, htmlAttributes: new { @class = "control-label col-md-3" })
+                <div class="col-md-9">
+                    @Html.EditorFor(model => model.CustomerEmail, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.CustomerEmail, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.CustomerAddress, htmlAttributes: new { @class = "control-label col-md-3" })
+                <div class="col-md-9">
+                    @Html.EditorFor(model => model.CustomerAddress, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.CustomerAddress, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Username, htmlAttributes: new { @class = "control-label col-md-3" })
+                <div class="col-md-9">
+                    @Html.EditorFor(model => model.Username, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Username, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Password, htmlAttributes: new { @class = "control-label col-md-3" })
+                <div class="col-md-9">
+                    @Html.EditorFor(model => model.Password, new { htmlAttributes = new { @class = "form-control", @type = "password" } })
+                    @Html.ValidationMessageFor(model => model.Password, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <!-- Role chỉ chọn Admin hoặc SuperAdmin -->
+            <div class="form-group">
+                @Html.LabelFor(model => model.Role, htmlAttributes: new { @class = "control-label col-md-3" })
+                <div class="col-md-9">
+                    @Html.DropDownListFor(model => model.Role, new SelectList(new[] { "Admin", "SuperAdmin" }), "-- Chọn quyền quản trị --", new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.Role, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <!-- Hiển thị ảnh hiện tại và cho phép chọn ảnh mới -->
+            <div class="form-group">
+                @Html.Label("Ảnh đại diện", htmlAttributes: new { @class = "control-label col-md-3" })
+                <div class="col-md-9">
+                    @if (!string.IsNullOrEmpty(Model.CustomerImage))
+                    {
+                        <div>
+                            <img src="@Model.CustomerImage" class="current-avatar" />
+                        </div>
+                    }
+                    <input type="file" name="ImageFile" class="form-control" />
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.IsActive, htmlAttributes: new { @class = "control-label col-md-3" })
+                <div class="col-md-9">
+                    <div class="checkbox" style="padding-top: 6px;">
+                        @Html.EditorFor(model => model.IsActive)
+                        @Html.ValidationMessageFor(model => model.IsActive, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group" style="margin-top: 25px;">
+                <div class="col-md-offset-3 col-md-9">
+                    <input type="submit" value="Lưu thay đổi" class="btn btn-save" />
+                    @Html.ActionLink("Quay lại danh sách", "Index", null, new { @class = "back-link" })
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

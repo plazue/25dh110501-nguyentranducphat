@@ -1,0 +1,102 @@
+﻿@model BE1.Models.Category
+
+@{
+    ViewBag.Title = "Xóa danh mục";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<style>
+    .bg-title {
+        background-color: #d4edda;
+        font-size: 24px;
+        padding: 10px 15px;
+        margin-bottom: 0;
+        color: #000;
+    }
+
+    .warning-box {
+        background-color: #f8d7da;
+        color: #721c24;
+        padding: 10px 15px;
+        font-size: 16px;
+        margin-bottom: 20px;
+    }
+
+    .delete-container {
+        padding: 0 15px;
+    }
+
+        .delete-container dl {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .delete-container dt {
+            font-weight: normal;
+            width: 120px;
+            margin-right: 20px;
+        }
+
+        .delete-container dd {
+            margin-bottom: 0;
+            font-weight: bold;
+        }
+
+    .btn-custom-delete {
+        background-color: #2b6cb0;
+        color: white;
+        padding: 6px 16px;
+        border: none;
+        border-radius: 3px;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+        .btn-custom-delete:hover {
+            background-color: #1a4971;
+            color: white;
+        }
+
+    .btn-custom-back {
+        background-color: #2b6cb0;
+        color: white;
+        padding: 6px 16px;
+        border-radius: 3px;
+        text-decoration: none;
+        display: inline-block;
+        margin-left: 5px;
+    }
+
+        .btn-custom-back:hover {
+            background-color: #1a4971;
+            color: white;
+        }
+</style>
+
+<h2 class="bg-title">XÓA DANH MỤC</h2>
+
+<div class="warning-box">
+    Bạn thực sự muốn xóa danh mục này à?
+</div>
+
+<!-- Hiển thị thông báo lỗi nếu danh mục còn sản phẩm -->
+@Html.ValidationSummary(false, "", new { @class = "alert alert-danger", @style = "background-color: #f8d7da; color: #721c24; padding: 10px 15px; margin-bottom: 20px; border: 1px solid #f5c6cb; list-style: none;" })
+
+<div class="delete-container">
+    <dl>
+        <dt>Tên danh mục</dt>
+        <dd>@Html.DisplayFor(model => model.CategoryName)</dd>
+    </dl>
+
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="form-actions no-color">
+            <input type="submit" value="Xóa" class="btn-custom-delete" />
+            @Html.ActionLink("Quay lại danh sách", "Index", null, new { @class = "btn-custom-back" })
+        </div>
+    }
+</div>

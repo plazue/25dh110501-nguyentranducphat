@@ -1,0 +1,249 @@
+﻿@model BE1.Models.Order
+
+@{
+    ViewBag.Title = "Chỉnh sửa đơn hàng";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+
+    string currentStatus = Model.PaymentStatus ?? "Chờ xử lý";
+}
+
+<style>
+    .admin-form-card {
+        background-color: #ffffff;
+        border-radius: 10px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        padding: 28px;
+        border: 1px solid #e2e8f0;
+        margin-bottom: 30px;
+    }
+
+    .admin-form-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-bottom: 16px;
+        margin-bottom: 24px;
+        border-bottom: 2px solid #e2efda;
+    }
+
+    .admin-form-title {
+        font-size: 22px;
+        font-weight: 700;
+        color: #1e293b;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin: 0;
+    }
+
+    .admin-label {
+        font-weight: 600;
+        color: #334155;
+        font-size: 14px;
+    }
+
+    .admin-input {
+        width: 100%;
+        padding: 10px 14px;
+        font-size: 14px;
+        border: 1px solid #cbd5e1;
+        border-radius: 6px;
+        background-color: #f8fafc;
+        color: #1e293b;
+    }
+
+    .admin-alert-danger {
+        background-color: #fef2f2;
+        border: 1px solid #fecaca;
+        color: #991b1b;
+        padding: 12px 16px;
+        border-radius: 6px;
+        font-size: 14px;
+        margin-bottom: 20px;
+    }
+
+    .btn-admin-next {
+        background-color: #2563eb;
+        color: #ffffff !important;
+        font-weight: 600;
+        font-size: 14px;
+        padding: 9px 20px;
+        border-radius: 6px;
+        border: none;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+        .btn-admin-next:hover {
+            background-color: #1d4ed8;
+        }
+
+    .btn-admin-cancel {
+        background-color: #dc2626;
+        color: #ffffff !important;
+        font-weight: 600;
+        font-size: 14px;
+        padding: 9px 20px;
+        border-radius: 6px;
+        border: none;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        margin-left: 10px;
+    }
+
+        .btn-admin-cancel:hover {
+            background-color: #b91c1c;
+        }
+
+    .btn-admin-back {
+        background-color: #f1f5f9;
+        color: #475569 !important;
+        font-weight: 600;
+        font-size: 13px;
+        padding: 7px 16px;
+        border-radius: 6px;
+        border: 1px solid #cbd5e1;
+        text-decoration: none;
+    }
+
+    .status-badge {
+        display: inline-block;
+        padding: 6px 14px;
+        border-radius: 6px;
+        font-weight: 600;
+        font-size: 14px;
+    }
+</style>
+
+<div class="admin-form-card">
+    <div class="admin-form-header">
+        <h3 class="admin-form-title">
+            <i class="fa-solid fa-pen-to-square text-warning me-2"></i> CẬP NHẬT ĐƠN HÀNG #@Model.OrderID
+        </h3>
+        @Html.ActionLink("Quay lại danh sách", "Index", null, new { @class = "btn-admin-back" })
+    </div>
+
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+
+        if (!ViewData.ModelState.IsValid)
+        {
+            <div class="admin-alert-danger">
+                @Html.ValidationSummary(true, "")
+            </div>
+        }
+
+        @Html.HiddenFor(model => model.OrderID)
+        @Html.HiddenFor(model => model.OrderDate)
+        @Html.HiddenFor(model => model.CustomerID)
+        @Html.HiddenFor(model => model.TotalAmount)
+        @Html.HiddenFor(model => model.PaymentStatus)
+        @Html.HiddenFor(model => model.ShippingAddress)
+        @Html.HiddenFor(model => model.DeliveryMethod)
+        @Html.HiddenFor(model => model.PaymentMethod)
+
+        <div class="row admin-form-group align-items-center mb-3">
+            <label class="col-md-2 admin-label">Khách hàng</label>
+            <div class="col-md-10">
+                <input type="text" class="admin-input" value="@(Model.Customer != null ? Model.Customer.Username : "N/A")" disabled />
+            </div>
+        </div>
+
+        <div class="row admin-form-group align-items-center mb-3">
+            <label class="col-md-2 admin-label">Tổng tiền (VNĐ)</label>
+            <div class="col-md-10">
+                <input type="text" class="admin-input" value="@string.Format("{0:N0} ₫", Model.TotalAmount)" disabled />
+            </div>
+        </div>
+
+        <div class="row admin-form-group align-items-center mb-3">
+            <label class="col-md-2 admin-label">Thông tin giao hàng</label>
+            <div class="col-md-10">
+                <textarea class="admin-input" rows="2" disabled>Người nhận: @(Model.Customer != null ? Model.Customer.CustomerName : "Khách") | SĐT: @(Model.Customer != null ? Model.Customer.CustomerPhone : "N/A") | ĐC: @Model.ShippingAddress</textarea>
+            </div>
+        </div>
+
+        <!-- Trạng thái hiện tại -->
+        <div class="row admin-form-group align-items-center mb-3">
+            <label class="col-md-2 admin-label">Trạng thái hiện tại</label>
+            <div class="col-md-10">
+                <div>
+                    @if (currentStatus == "Chờ xử lý")
+                    {
+                        <span class="status-badge" style="background-color: #fef3c7; color: #d97706;">Chờ xử lý</span>
+                    }
+                    else if (currentStatus == "Đã xử lý")
+                    {
+                        <span class="status-badge" style="background-color: #f0fdf4; color: #16a34a;">Đã xử lý</span>
+                    }
+                    else if (currentStatus == "Đang giao hàng" || currentStatus == "Đang giao")
+                    {
+                        <span class="status-badge" style="background-color: #e0f2fe; color: #0284c7;">Đang giao hàng</span>
+                    }
+                    else if (currentStatus == "Đã giao")
+                    {
+                        <span class="status-badge" style="background-color: #e0e7ff; color: #3730a3;">Đã giao</span>
+                    }
+                    else if (currentStatus == "Hoàn thành")
+                    {
+                        <span class="status-badge" style="background-color: #d1fae5; color: #059669;">Hoàn thành</span>
+                    }
+                    else
+                    {
+                        <span class="status-badge" style="background-color: #fee2e2; color: #dc2626;">Đã hủy</span>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Nút thao tác chuyển trạng thái tuần tự -->
+        <div class="row mt-4">
+            <div class="col-md-10 offset-md-2">
+                @if (currentStatus == "Chờ xử lý")
+                {
+                    <button type="submit" name="actionType" value="Next" class="btn-admin-next">
+                        <i class="fa-solid fa-arrow-right"></i> Chuyển sang Đã xử lý
+                    </button>
+                    <button type="submit" name="actionType" value="Cancel" class="btn-admin-cancel" onclick="return confirm('Bạn có chắc chắn muốn hủy đơn hàng này không?');">
+                        <i class="fa-solid fa-ban"></i> Hủy đơn hàng
+                    </button>
+                }
+                else if (currentStatus == "Đã xử lý")
+                {
+                    <button type="submit" name="actionType" value="Next" class="btn-admin-next">
+                        <i class="fa-solid fa-truck"></i> Chuyển sang Đang giao hàng
+                    </button>
+                    <button type="submit" name="actionType" value="Cancel" class="btn-admin-cancel" onclick="return confirm('Bạn có chắc chắn muốn hủy đơn hàng này không?');">
+                        <i class="fa-solid fa-ban"></i> Hủy đơn hàng
+                    </button>
+                }
+                else if (currentStatus == "Đang giao hàng" || currentStatus == "Đang giao")
+                {
+                    <button type="submit" name="actionType" value="Next" class="btn-admin-next">
+                        <i class="fa-solid fa-box-open"></i> Chuyển sang Đã giao
+                    </button>
+                    <button type="submit" name="actionType" value="Cancel" class="btn-admin-cancel" onclick="return confirm('Bạn có chắc chắn muốn hủy đơn hàng này không?');">
+                        <i class="fa-solid fa-ban"></i> Hủy đơn hàng
+                    </button>
+                }
+                else if (currentStatus == "Đã giao")
+                {
+                    <button type="submit" name="actionType" value="Next" class="btn-admin-next">
+                        <i class="fa-solid fa-check"></i> Xác nhận Hoàn thành
+                    </button>
+                    <button type="submit" name="actionType" value="Cancel" class="btn-admin-cancel" onclick="return confirm('Bạn có chắc chắn muốn hủy đơn hàng này không?');">
+                        <i class="fa-solid fa-ban"></i> Hủy đơn hàng
+                    </button>
+                }
+                else
+                {
+                    <span class="text-muted fw-semibold">Đơn hàng này đã kết thúc trạng thái xử lý.</span>
+                }
+            </div>
+        </div>
+    }
+</div>

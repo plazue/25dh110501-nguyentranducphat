@@ -1,0 +1,100 @@
+﻿@model IEnumerable<BE1.Models.Product>
+
+@{
+    ViewBag.Title = "Quản lý kho hàng";
+    Layout = "~/Areas/Admin/Views/Shared/_adminLayout.cshtml";
+
+    // Phân loại danh sách theo số lượng tồn kho (Quantity)
+    var tonKhoList = Model != null ? Model.Where(p => p.Quantity > 0).ToList() : new List<BE1.Models.Product>();
+    var canNhapList = Model != null ? Model.Where(p => p.Quantity == 0).ToList() : new List<BE1.Models.Product>();
+}
+
+<div class="admin-card">
+    <h3 class="admin-title"><i class="fa-solid fa-warehouse me-2"></i> Thống kê kho hàng</h3>
+
+    <!-- PHẦN 1: DANH SÁCH HÀNG TỒN (Số lượng > 0) -->
+    <div class="section-heading">1. Danh sách hàng tồn (Còn hàng)</div>
+    <div class="table-responsive">
+        @Html.Partial("_InventoryTable", tonKhoList)
+    </div>
+
+    <!-- PHẦN 2: DANH SÁCH HÀNG CẦN NHẬP (Số lượng = 0) -->
+    <div class="section-heading">2. Danh sách hàng cần nhập (Hết hàng)</div>
+    <div class="table-responsive">
+        @Html.Partial("_InventoryTable", canNhapList)
+    </div>
+</div>
+
+<style>
+    .admin-card {
+        background-color: #ffffff;
+        border-radius: 10px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        padding: 28px;
+        border: 1px solid #e2e8f0;
+        margin-bottom: 30px;
+    }
+
+    .admin-title {
+        font-size: 22px;
+        font-weight: 700;
+        color: #1e293b;
+        text-transform: uppercase;
+        margin-bottom: 20px;
+    }
+
+    .section-heading {
+        font-size: 18px;
+        font-weight: 700;
+        color: #1e293b;
+        margin-top: 25px;
+        margin-bottom: 15px;
+        border-left: 4px solid #2563eb;
+        padding-left: 10px;
+    }
+
+    .admin-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        margin-bottom: 20px;
+    }
+
+        .admin-table thead tr {
+            background-color: #e2efda;
+        }
+
+        .admin-table th {
+            color: #2d3748;
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            padding: 12px 16px;
+            border-bottom: 2px solid #cbd5e1;
+        }
+
+        .admin-table td {
+            padding: 12px 16px;
+            color: #1e293b;
+            font-size: 14px;
+            border-bottom: 1px solid #e2e8f0;
+            background-color: #f8fafc;
+            vertical-align: middle;
+        }
+
+    .badge-ton {
+        background-color: #e0f2fe;
+        color: #0369a1;
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-weight: 600;
+    }
+
+    .badge-het {
+        background-color: #fee2e2;
+        color: #991b1b;
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-weight: 600;
+    }
+</style>

@@ -1,0 +1,35 @@
+﻿@model BE1.Models.viewmodel.HomeProductVM
+
+@if (Model != null && Model.NewProducts != null && Model.NewProducts.Any())
+{
+    <section class="section">
+        <div class="section-heading">
+            <div>
+                <h2>Sản phẩm mới</h2>
+                <p>Khám phá các sản phẩm mới nhất vừa cập bến tại cửa hàng</p>
+            </div>
+            <a class="see-all" href="@Url.Action("ProductList", "Home1", new { area = "Customer" })">Xem tất cả <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+
+        <div class="product-grid">
+            @foreach (var item in Model.NewProducts)
+            {
+                <div class="product-card">
+                    <span class="sale-tag" style="background: #2563eb;">Mới</span>
+                    <a href="@Url.Action("ProductDetails", "Home1", new { area = "Customer", id = item.ProductID })">
+                        <div class="product-photo">
+                            <img src="@(!string.IsNullOrEmpty(item.ProductImage) ? item.ProductImage : Url.Content("~/Content/image2/thumb.jpg"))" alt="@item.ProductName" />
+                        </div>
+                        <div class="product-info">
+                            <div class="product-brand">@(item.Category != null ? item.Category.CategoryName : "Lubu Store")</div>
+                            <div class="product-name">@item.ProductName</div>
+                            <div class="product-price-row">
+                                <div class="product-price text-danger">@item.ProductPrice.ToString("N0") ₫</div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            }
+        </div>
+    </section>
+}

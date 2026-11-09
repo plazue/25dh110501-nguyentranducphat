@@ -1,0 +1,42 @@
+﻿@model IEnumerable<BE1.Models.viewmodel.ThongKeViewModel>
+@{
+    ViewBag.Title = "Biểu Đồ Thống Kê";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="panel panel-default" style="margin-top: 20px;">
+    <div class="panel-heading" style="background-color: #e2f0d9; color: #385723; font-weight: bold; font-size: 24px; text-transform: uppercase;">
+        BIỂU ĐỒ THỐNG KÊ
+    </div>
+    <div class="panel-body" style="text-align: center;">
+        <!-- Khung chứa Google Chart -->
+        <div id="piechart_3d" style="width: 100%; height: 500px;"></div>
+    </div>
+</div>
+
+
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script type="text/javascript">
+    google.charts.load("current", { packages: ["corechart"] });
+    google.charts.setOnLoadCallback(drawChart);
+
+    function drawChart() {
+        var data = google.visualization.arrayToDataTable([
+            ['Loại hàng', 'Số lượng'],
+            @foreach (var item in Model)
+            {
+                @:['@Html.Raw(item.TenLoai)', @item.SoLuong],
+            }
+        ]);
+
+        var options = {
+            title: 'TỶ LỆ HÀNG HÓA',
+            is3D: true,
+            chartArea: { width: '80%', height: '80%' },
+            fontSize: 14
+        };
+
+        var chart = new google.visualization.PieChart(document.getElementById('piechart_3d'));
+        chart.draw(data, options);
+    }
+</script>

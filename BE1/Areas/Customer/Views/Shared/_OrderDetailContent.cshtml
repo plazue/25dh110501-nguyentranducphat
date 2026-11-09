@@ -1,0 +1,66 @@
+﻿
+@model BE1.Models.Order
+
+<div class="invoice-box" style="background: #fff; padding: 30px; border-radius: 12px; border: 1px solid #e5e5e7; max-width: 800px; margin: 0 auto;">
+    <div style="display: flex; justify-content: space-between; border-bottom: 2px solid #eee; padding-bottom: 20px; margin-bottom: 20px;">
+        <div>
+            <h2 style="color: #2b78a2; margin-bottom: 5px;">HÓA ĐƠN MUA HÀNG</h2>
+            <p style="font-size: 14px; color: #666;">Mã đơn hàng: <strong>#@Model.OrderID</strong></p>
+            <p style="font-size: 14px; color: #666;">Ngày đặt: <strong>@string.Format("{0:dd/MM/yyyy HH:mm}", Model.OrderDate)</strong></p>
+        </div>
+        <div style="text-align: right;">
+            <p style="font-size: 14px; color: #666;">Trạng thái thanh toán:</p>
+            <span style="background: #e0f2fe; color: #0369a1; padding: 4px 10px; border-radius: 6px; font-weight: 600; font-size: 13px;">
+                @(string.IsNullOrEmpty(Model.PaymentStatus) ? "Chưa thanh toán" : Model.PaymentStatus)
+            </span>
+        </div>
+    </div>
+
+    <!-- Thông tin người nhận và giao hàng -->
+    <div style="margin-bottom: 20px; background: #f8fafc; padding: 15px; border-radius: 8px;">
+        <h4 style="margin-bottom: 8px; font-size: 15px; color: #111;">Thông tin giao hàng:</h4>
+        <p style="font-size: 14px; color: #444; margin-bottom: 4px;">Khách hàng: <strong>@(Model.Customer != null ? Model.Customer.CustomerName : "Khách hàng")</strong></p>
+        <p style="font-size: 14px; color: #444; margin-bottom: 4px;">Số điện thoại: <strong>@(Model.Customer != null ? Model.Customer.CustomerPhone : "Không có")</strong></p>
+        <p style="font-size: 14px; color: #444; margin-bottom: 4px;">Địa chỉ giao: <strong>@Model.ShippingAddress</strong></p>
+        <p style="font-size: 14px; color: #444; margin-bottom: 4px;">Phương thức thanh toán: <strong>@Model.PaymentMethod</strong></p>
+        <p style="font-size: 14px; color: #444; margin-bottom: 0;">Hình thức giao hàng: <strong>@Model.DeliveryMethod</strong></p>
+    </div>
+
+    <!-- Bảng danh sách sản phẩm trong hóa đơn -->
+    <h4 style="margin-bottom: 12px; font-size: 15px; color: #111;">Chi tiết sản phẩm:</h4>
+    <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+        <thead>
+            <tr style="background: #f1f5f9; text-align: left; font-size: 13px; color: #334155;">
+                <th style="padding: 10px; border-bottom: 1px solid #cbd5e1;">Sản phẩm</th>
+                <th style="padding: 10px; border-bottom: 1px solid #cbd5e1; text-align: center;">Số lượng</th>
+                <th style="padding: 10px; border-bottom: 1px solid #cbd5e1; text-align: right;">Đơn giá</th>
+                <th style="padding: 10px; border-bottom: 1px solid #cbd5e1; text-align: right;">Thành tiền</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.OrderDetails != null && Model.OrderDetails.Any())
+            {
+                foreach (var detail in Model.OrderDetails)
+                {
+                    <tr style="font-size: 13px; color: #334155;">
+                        <td style="padding: 12px 10px; border-bottom: 1px solid #f1f5f9; display: flex; align-items: center; gap: 10px;">
+                            <img src="@Url.Content(!string.IsNullOrEmpty(detail.Product?.ProductImage) ? detail.Product.ProductImage : "~/Content/image2/thumb.jpg")" style="width: 40px; height: 40px; object-fit: contain; border-radius: 4px; border: 1px solid #eee;" />
+                            <span>@(detail.Product?.ProductName ?? "Sản phẩm")</span>
+                        </td>
+                        <td style="padding: 12px 10px; border-bottom: 1px solid #f1f5f9; text-align: center;">@detail.Quantity</td>
+                        <td style="padding: 12px 10px; border-bottom: 1px solid #f1f5f9; text-align: right;">@string.Format("{0:N0} ₫", detail.UnitPrice)</td>
+                        <td style="padding: 12px 10px; border-bottom: 1px solid #f1f5f9; text-align: right; font-weight: 600;">@string.Format("{0:N0} ₫", detail.TotalPrice)</td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+
+    <!-- Tổng tiền hóa đơn -->
+    <div style="display: flex; justify-content: flex-end; border-top: 2px solid #eee; padding-top: 15px;">
+        <div style="text-align: right;">
+            <p style="font-size: 15px; color: #555; margin-bottom: 5px;">Tổng cộng thanh toán:</p>
+            <h3 style="color: #dc2626; font-size: 20px;">@string.Format("{0:N0} ₫", Model.TotalAmount)</h3>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,123 @@
+﻿@model IEnumerable<BE1.Models.Order>
+
+@{
+    ViewBag.Title = "Quản lý đơn hàng";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<style>
+    .order-container {
+        padding: 20px;
+        background: #fff;
+        border-radius: 6px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        margin: 20px auto;
+        max-width: 1200px;
+    }
+
+    .order-header {
+        background-color: #d4edda;
+        color: #155724;
+        padding: 15px 20px;
+        font-size: 22px;
+        font-weight: bold;
+        border-radius: 4px;
+        margin-bottom: 20px;
+    }
+
+    .table-custom {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 20px;
+    }
+
+        .table-custom th {
+            background-color: #d4edda;
+            color: #155724;
+            padding: 12px 15px;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 2px solid #c3e6cb;
+        }
+
+        .table-custom td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #dee2e6;
+            vertical-align: middle;
+            color: #333;
+        }
+
+        .table-custom tr:hover {
+            background-color: #f8f9fa;
+        }
+
+    .badge-status {
+        padding: 4px 8px;
+        border-radius: 10px;
+        font-size: 12px;
+        font-weight: bold;
+        background-color: #fff3cd;
+        color: #856404;
+    }
+
+    .action-links a {
+        margin-right: 8px;
+        text-decoration: none;
+        font-weight: 500;
+    }
+
+    .action-edit {
+        color: #007bff;
+    }
+
+    .action-details {
+        color: #17a2b8;
+    }
+
+    .action-delete {
+        color: #dc3545;
+    }
+
+    .action-links a:hover {
+        text-decoration: underline;
+    }
+</style>
+
+<div class="order-container">
+    <div class="order-header">
+        QUẢN LÝ ĐƠN HÀNG
+    </div>
+
+    <table class="table-custom">
+        <tr>
+            <th>Khách hàng</th>
+            <th>Ngày đặt</th>
+            <th>Tổng tiền</th>
+            <th>Trạng thái thanh toán</th>
+            <th>Địa chỉ giao</th>
+            <th>Vận chuyển</th>
+            <th>Thanh toán</th>
+            <th>Thao tác</th>
+        </tr>
+
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td><strong>@(item.Customer != null ? item.Customer.CustomerName : "N/A")</strong></td>
+                <td>@(item.OrderDate != null ? item.OrderDate.ToString("dd/MM/yyyy HH:mm") : "")</td>
+                <td><span style="color: #28a745; font-weight: bold;">@string.Format("{0:N0} đ", item.TotalAmount)</span></td>
+                <td>
+                    <span class="badge-status">@item.PaymentStatus</span>
+                </td>
+                <td>@item.ShippingAddress</td>
+                <td>@item.DeliveryMethod</td>
+                <td>@item.PaymentMethod</td>
+                <td class="action-links">
+                    @Html.ActionLink("Sửa", "Edit", new { id = item.OrderID }, new { @class = "action-edit" }) |
+                    @Html.ActionLink("Chi tiết", "Details", new { id = item.OrderID }, new { @class = "action-details" }) |
+                    @Html.ActionLink("Xóa", "Delete", new { id = item.OrderID }, new { @class = "action-delete" })
+                </td>
+            </tr>
+        }
+    </table>
+</div>

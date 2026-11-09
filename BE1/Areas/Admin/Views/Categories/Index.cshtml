@@ -1,0 +1,85 @@
+﻿@model IEnumerable<BE1.Models.Category>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+<style>
+    .bg {
+        background-color: #d4edda; /* Xanh lá nhạt giống ảnh */
+        font-size: 24px;
+        padding: 10px 15px;
+        margin-bottom: 0;
+    }
+
+    .table-custom {
+        width: 100%;
+        background-color: #e2f0d9; /* Xanh dương/xanh ngọc nhạt nền bảng */
+        border-collapse: collapse;
+    }
+
+        .table-custom th {
+            background-color: #d4edda;
+            font-size: 14px;
+            font-weight: bold;
+            padding: 10px 15px;
+            border-bottom: 2px solid #ccc;
+        }
+
+        .table-custom td {
+            padding: 10px 15px;
+            border-bottom: 1px solid #dcdcdc;
+        }
+        /* Tùy chỉnh nút Cập nhật và Xóa */
+        .table-custom .btn-update {
+            background-color: #2b6cb0;
+            color: white;
+            padding: 5px 12px;
+            text-decoration: none;
+            border-radius: 3px;
+            margin-right: 5px;
+            display: inline-block;
+        }
+
+        .table-custom .btn-delete {
+            background-color: #2b6cb0;
+            color: white;
+            padding: 5px 12px;
+            text-decoration: none;
+            border-radius: 3px;
+            display: inline-block;
+        }
+
+            .table-custom .btn-update:hover, .table-custom .btn-delete:hover {
+                background-color: #1a4971;
+                color: white;
+            }
+            
+</style>
+
+<body>
+<table class="table-custom">
+    <tr>
+        <th>
+            TÊN DANH MỤC
+        </th>
+        <th style="width: 180px;"></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.CategoryName)
+            </td>
+            <td>
+                @Html.ActionLink("Cập nhật", "Edit", new { id = item.CategoryID }, new { @class = "btn-update" })
+                @Html.ActionLink("Xóa", "Delete", new { id = item.CategoryID }, new { @class = "btn-delete" })
+            </td>
+        </tr>
+    }
+</table>
+
+<p style="margin-top: 15px;">
+    @Html.ActionLink("Thêm mới", "Create", null, new { @class = "btn btn-primary", @style = "background-color: #2b6cb0; border-color: #2b6cb0;" })
+</p>

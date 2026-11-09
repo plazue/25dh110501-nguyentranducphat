@@ -1,0 +1,206 @@
+﻿@model BE1.Models.Customer
+
+@{
+    ViewBag.Title = "Chỉnh sửa thông tin tài khoản - Lubu Store";
+    Layout = "~/Areas/Customer/Views/Shared/_CustomerLayout.cshtml";
+}
+
+<div class="account-edit-wrapper">
+    <div class="account-card">
+        <h1 class="account-title">Thông tin tài khoản</h1>
+        <p class="account-subtitle">Quản lý thông tin cá nhân, giao hàng và bảo mật của bạn tại Lubu Store</p>
+
+        @if (TempData["SuccessMessage"] != null || ViewBag.SuccessMessage != null)
+        {
+            <div style="background-color: #dcfce7; color: #15803d; padding: 10px 14px; border-radius: 6px; font-size: 14px; margin-bottom: 20px; border: 1px solid #bbf7d0; text-align: center; font-weight: 600;">
+                @(TempData["SuccessMessage"] ?? ViewBag.SuccessMessage)
+            </div>
+        }
+
+        @Html.ValidationSummary(true, "", new { @style = "background-color: #fee2e2; color: #dc2626; padding: 10px 14px; border-radius: 6px; font-size: 14px; margin-bottom: 20px; border: 1px solid #fecaca; list-style: none;" })
+
+        @using (Html.BeginForm("Edit", "Account", new { area = "Customer" }, FormMethod.Post, new { id = "edit-account-form" }))
+        {
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(model => model.CustomerID)
+            @Html.HiddenFor(model => model.Username)
+            @Html.HiddenFor(model => model.Role)
+            @Html.HiddenFor(model => model.IsActive)
+            @Html.HiddenFor(model => model.CustomerImage)
+
+            <div class="form-group">
+                <label class="form-label">Tên tài khoản (Username)</label>
+                @Html.TextBoxFor(model => model.Username, new { @class = "form-input", @readonly = "readonly", @style = "background-color: #f3f4f6; cursor: not-allowed;" })
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Họ và tên</label>
+                @Html.TextBoxFor(model => model.CustomerName, new { @class = "form-input", @placeholder = "Nhập họ và tên...", @required = "required" })
+                @Html.ValidationMessageFor(model => model.CustomerName, "", new { @class = "field-error" })
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Địa chỉ Email</label>
+                @Html.TextBoxFor(model => model.CustomerEmail, new { @type = "email", @class = "form-input", @readonly = "readonly", @style = "background-color: #f3f4f6; cursor: not-allowed;" })
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Số điện thoại</label>
+                @Html.TextBoxFor(model => model.CustomerPhone, new { @type = "tel", @class = "form-input", @placeholder = "Nhập số điện thoại liên hệ..." })
+                @Html.ValidationMessageFor(model => model.CustomerPhone, "", new { @class = "field-error" })
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Địa chỉ giao hàng</label>
+                @Html.TextAreaFor(model => model.CustomerAddress, new { @class = "form-input", @rows = "2", @placeholder = "Số nhà, tên đường, phường/xã, quận/huyện..." })
+                @Html.ValidationMessageFor(model => model.CustomerAddress, "", new { @class = "field-error" })
+            </div>
+
+            <hr class="divider">
+
+            <h2 class="section-title">Bảo mật tài khoản</h2>
+
+            <div class="form-group">
+                <label class="form-label">Mật khẩu</label>
+                @Html.PasswordFor(model => model.Password, new { @class = "form-input", @placeholder = "••••••••", @required = "required" })
+                @Html.ValidationMessageFor(model => model.Password, "", new { @class = "field-error" })
+            </div>
+
+            <div class="form-action-btns">
+                <button type="submit" class="btn-submit">Lưu thay đổi</button>
+                <a href="@Url.Action("Logout", "Account", new { area = "Customer" })" class="btn-logout">
+                    <i class="fa-solid fa-right-from-bracket"></i> Đăng xuất
+                </a>
+            </div>
+        }
+    </div>
+</div>
+
+<style>
+    .account-edit-wrapper {
+        min-height: calc(100vh - 70px);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-image: url("/content/image2/5-1.jpg");
+        background-size: cover;
+        background-position: center;
+        padding: 40px 20px;
+    }
+
+    .account-card {
+        background-color: #ffffff;
+        border: 1px solid #e2e8f0;
+        width: 100%;
+        max-width: 520px;
+        padding: 40px;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+        border-radius: 12px;
+    }
+
+    .account-title {
+        color: #111827;
+        font-size: 24px;
+        font-weight: 700;
+        margin-bottom: 6px;
+    }
+
+    .account-subtitle {
+        color: #6b7280;
+        font-size: 14px;
+        margin-bottom: 24px;
+    }
+
+    .form-group {
+        margin-bottom: 18px;
+    }
+
+    .form-label {
+        display: block;
+        font-size: 12px;
+        text-transform: uppercase;
+        color: #374151;
+        margin-bottom: 6px;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+    }
+
+    .form-input {
+        width: 100%;
+        background-color: #fff;
+        border: 1px solid #d1d5db;
+        padding: 12px 16px;
+        color: #111827;
+        font-size: 14px;
+        border-radius: 6px;
+        outline: none;
+        transition: border-color 0.2s;
+    }
+
+        .form-input:focus {
+            border-color: #2563eb;
+        }
+
+    .field-error {
+        color: #dc2626;
+        font-size: 12px;
+        margin-top: 5px;
+        display: block;
+    }
+
+    .divider {
+        border: none;
+        border-top: 1px solid #e5e7eb;
+        margin: 24px 0;
+    }
+
+    .section-title {
+        font-size: 15px;
+        font-weight: 700;
+        color: #111827;
+        margin-bottom: 16px;
+    }
+
+    .form-action-btns {
+        display: flex;
+        gap: 12px;
+        margin-top: 24px;
+    }
+
+    .btn-submit {
+        flex: 1;
+        background-color: #2563eb;
+        color: #ffffff;
+        font-weight: 700;
+        padding: 12px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 14px;
+        transition: background-color 0.2s;
+    }
+
+        .btn-submit:hover {
+            background-color: #1d4ed8;
+        }
+
+    .btn-logout {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        background-color: #f3f4f6;
+        color: #dc2626;
+        font-weight: 600;
+        padding: 12px 20px;
+        border-radius: 6px;
+        text-decoration: none;
+        font-size: 14px;
+        border: 1px solid #e5e7eb;
+        transition: background-color 0.2s;
+    }
+
+        .btn-logout:hover {
+            background-color: #fee2e2;
+        }
+</style>

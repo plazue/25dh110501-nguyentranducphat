@@ -1,0 +1,197 @@
+﻿@model IEnumerable<BE1.Models.Order>
+
+@{
+    ViewBag.Title = "Lịch sử mua hàng";
+    Layout = "~/Areas/Customer/Views/Shared/_CustomerLayout.cshtml";
+}
+
+<div class="history-container">
+    <div class="history-header">
+        <h1>Lịch sử mua hàng của bạn</h1>
+        <a href="@Url.Action("ProductList", "Home1", new { area = "Customer" })" class="btn-detail"><i class="fa-solid fa-arrow-left"></i> Tiếp tục mua sắm</a>
+    </div>
+
+    <div id="orderHistoryList">
+        @if (Model != null && Model.Any())
+        {
+            foreach (var order in Model)
+            {
+                <div class="order-card">
+                    <div class="order-card-header">
+                        <span class="order-code">Đơn hàng #@order.OrderID</span>
+                        <span class="order-date"><i class="fa-regular fa-clock"></i> @string.Format("{0:dd/MM/yyyy HH:mm}", order.OrderDate)</span>
+                    </div>
+
+                    <div class="order-items-preview">
+                        @if (order.OrderDetails != null && order.OrderDetails.Any())
+                        {
+                            foreach (var detail in order.OrderDetails)
+                            {
+                                <div class="preview-item">
+                                    <img src="@Url.Content(!string.IsNullOrEmpty(detail.Product?.ProductImage) ? detail.Product.ProductImage : "~/Content/image2/thumb.jpg")" class="preview-img" alt="@(detail.Product?.ProductName ?? "Sản phẩm")">
+                                    <div class="preview-info">
+                                        <div class="preview-name">@(detail.Product?.ProductName ?? "Sản phẩm không tồn tại")</div>
+                                        <div class="preview-qty">Số lượng: @detail.Quantity | Đơn giá: @string.Format("{0:N0} ₫", detail.UnitPrice)</div>
+                                    </div>
+                                </div>
+                            }
+                        }
+                    </div>
+
+                    <div class="order-card-footer">
+                        <div class="order-total">
+                            Trạng thái: <span style="color: #2563eb; font-weight: 600;">@(string.IsNullOrEmpty(order.PaymentStatus) ? "Chưa thanh toán" : order.PaymentStatus)</span>
+                            | Tổng tiền: @string.Format("{0:N0} ₫", order.TotalAmount)
+                        </div>
+                        <a href="@Url.Action("Details", "Order", new { area = "Customer", id = order.OrderID })" class="btn-detail">Xem chi tiết</a>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="empty-history">
+                <i class="fa-solid fa-box-open"></i>
+                <p style="font-size: 16px; color: #666; margin-bottom: 15px;">Bạn chưa có đơn hàng nào trong hệ thống.</p>
+                <a href="@Url.Action("ProductList", "Home1", new { area = "Customer" })" class="btn-detail">Mua sắm ngay</a>
+            </div>
+        }
+    </div>
+</div>
+
+<style>
+    .history-container {
+        max-width: 900px;
+        margin: 40px auto;
+        padding: 0 15px;
+    }
+
+    .history-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;
+    }
+
+        .history-header h1 {
+            font-size: 24px;
+            font-weight: 700;
+            color: #111;
+        }
+
+    .order-card {
+        background: #fff;
+        border-radius: 12px;
+        padding: 20px 24px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        border: 1px solid #e5e5e7;
+    }
+
+    .order-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid #f0f0f0;
+        padding-bottom: 12px;
+        margin-bottom: 15px;
+    }
+
+    .order-code {
+        font-weight: 600;
+        font-size: 15px;
+        color: #2b78a2;
+    }
+
+    .order-date {
+        font-size: 13px;
+        color: #666;
+    }
+
+    .order-items-preview {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        margin-bottom: 15px;
+    }
+
+    .preview-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .preview-img {
+        width: 50px;
+        height: 50px;
+        object-fit: contain;
+        border-radius: 6px;
+        border: 1px solid #eee;
+        background: #f9fafb;
+        padding: 4px;
+    }
+
+    .preview-info {
+        flex: 1;
+    }
+
+    .preview-name {
+        font-size: 14px;
+        font-weight: 600;
+        color: #222;
+        margin-bottom: 2px;
+    }
+
+    .preview-qty {
+        font-size: 12px;
+        color: #777;
+    }
+
+    .order-card-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-top: 1px solid #f0f0f0;
+        padding-top: 12px;
+    }
+
+    .order-total {
+        font-size: 15px;
+        font-weight: 700;
+        color: #111;
+    }
+
+    .btn-detail {
+        background-color: #2b78a2;
+        color: #fff;
+        padding: 8px 16px;
+        border-radius: 6px;
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 600;
+        transition: background 0.2s;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+        .btn-detail:hover {
+            background-color: #1f5777;
+            color: #fff;
+        }
+
+    .empty-history {
+        text-align: center;
+        padding: 50px 20px;
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        border: 1px solid #e5e7e8;
+    }
+
+        .empty-history i {
+            font-size: 48px;
+            color: #ccc;
+            margin-bottom: 15px;
+        }
+</style>

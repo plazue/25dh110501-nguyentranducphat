@@ -1,0 +1,132 @@
+﻿@model IEnumerable<BE1.Models.Customer>
+
+@{
+    ViewBag.Title = "Quản lý khách hàng";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<style>
+    .customer-container {
+        padding: 20px;
+        background: #fff;
+        border-radius: 6px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        margin: 20px auto;
+        max-width: 1200px;
+    }
+
+    .customer-header {
+        background-color: #d4edda;
+        color: #155724;
+        padding: 15px 20px;
+        font-size: 22px;
+        font-weight: bold;
+        border-radius: 4px;
+        margin-bottom: 20px;
+    }
+
+    .table-custom {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 20px;
+    }
+
+        .table-custom th {
+            background-color: #d4edda;
+            color: #155724;
+            padding: 12px 15px;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 2px solid #c3e6cb;
+        }
+
+        .table-custom td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #dee2e6;
+            vertical-align: middle;
+            color: #333;
+        }
+
+        .table-custom tr:hover {
+            background-color: #f8f9fa;
+        }
+
+    .avatar-img {
+        width: 45px;
+        height: 45px;
+        object-fit: cover;
+        border-radius: 50%;
+        border: 1px solid #ddd;
+    }
+
+    .badge-role {
+        padding: 5px 10px;
+        border-radius: 12px;
+        font-size: 12px;
+        font-weight: bold;
+    }
+
+    .badge-customer {
+        background-color: #e2e3e5;
+        color: #383d41;
+    }
+
+    .action-links a {
+        text-decoration: none;
+        font-weight: 500;
+    }
+
+    .action-details {
+        color: #17a2b8;
+    }
+
+    .action-links a:hover {
+        text-decoration: underline;
+    }
+</style>
+
+<div class="customer-container">
+    <div class="customer-header">
+        QUẢN LÝ DANH SÁCH KHÁCH HÀNG
+    </div>
+
+    <table class="table-custom">
+        <tr>
+            <th>Mã KH</th>
+            <th>Họ và tên</th>
+            <th>Tên đăng nhập</th>
+            <th>Địa chỉ Email</th>
+            <th>Số điện thoại</th>
+            <th>Hình ảnh</th>
+            <th>Trạng thái</th>
+            <th>Thao tác</th>
+        </tr>
+
+        @foreach (var item in Model.Where(m => m.Role == "Customer" || string.IsNullOrEmpty(m.Role) || m.Role == "User" || m.Role == "0"))
+        {
+            <tr>
+                <td>@item.CustomerID</td>
+                <td><strong>@item.CustomerName</strong></td>
+                <td>@item.Username</td>
+                <td>@item.CustomerEmail</td>
+                <td>@item.CustomerPhone</td>
+                <td>
+                    @if (!string.IsNullOrEmpty(item.CustomerImage))
+                    {
+                        <img src="@item.CustomerImage" class="avatar-img" />
+                    }
+                    else
+                    {
+                        <span class="text-muted">Chưa có ảnh</span>
+                    }
+                </td>
+                <td>
+                    @(item.IsActive == true ? "Hoạt động" : "Khóa")
+                </td>
+                <td class="action-links">
+                    @Html.ActionLink("Chi tiết", "Details1", new { id = item.CustomerID }, new { @class = "action-details" })
+                </td>
+            </tr>
+        }
+    </table>
+</div>

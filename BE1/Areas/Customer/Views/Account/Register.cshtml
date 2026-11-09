@@ -1,0 +1,207 @@
+﻿@model BE1.Models.Customer
+
+@{
+    ViewBag.Title = "Đăng ký tài khoản - Lubu Store";
+    Layout = "~/Areas/Customer/Views/Shared/_CustomerLayout.cshtml";
+}
+
+<div class="auth-wrapper">
+    <div class="auth-card">
+        <div class="auth-title">Đăng Ký Tài Khoản</div>
+
+        @using (Html.BeginForm("Register", "Account", new { area = "Customer" }, FormMethod.Post, new { id = "signup-form" }))
+        {
+            @Html.AntiForgeryToken()
+
+            <!-- Đặt input ẩn ở đây để tự động truyền quyền Customer lên Controller -->
+            <input type="hidden" name="Role" value="Customer" />
+
+            <!-- Hiển thị thông báo lỗi chi tiết nếu thiếu mục hoặc dữ liệu không hợp lệ -->
+            @Html.ValidationSummary(false, "", new { @class = "alert-error-msg" })
+
+            <div class="form-group">
+                <label class="form-label">Tên đăng nhập (Username)</label>
+                @Html.TextBoxFor(model => model.Username, new { @class = "form-input", @placeholder = "Nhập tên đăng nhập...", @required = "required", @pattern = @"^\S+$", @title = "Tên đăng nhập không được chứa khoảng trắng" })
+                @Html.ValidationMessageFor(model => model.Username, "", new { @class = "field-error", @style = "display:block;" })
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Họ và tên</label>
+                @Html.TextBoxFor(model => model.CustomerName, new { @class = "form-input", @placeholder = "Nhập họ và tên của bạn...", @required = "required" })
+                @Html.ValidationMessageFor(model => model.CustomerName, "", new { @class = "field-error", @style = "display:block;" })
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Số điện thoại</label>
+                @Html.TextBoxFor(model => model.CustomerPhone, new { @class = "form-input", @placeholder = "Nhập số điện thoại...", @required = "required", @pattern = @"^[0-9]{10,11}$", @title = "Số điện thoại phải từ 10-11 chữ số" })
+                @Html.ValidationMessageFor(model => model.CustomerPhone, "", new { @class = "field-error", @style = "display:block;" })
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Địa chỉ Email</label>
+                @Html.TextBoxFor(model => model.CustomerEmail, new { @type = "email", @class = "form-input", @placeholder = "nhapemail@domain.com", @required = "required" })
+                @Html.ValidationMessageFor(model => model.CustomerEmail, "", new { @class = "field-error", @style = "display:block;" })
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Mật khẩu</label>
+                @Html.PasswordFor(model => model.Password, new { @class = "form-input", @placeholder = "••••••••", @required = "required", @pattern = @"^\S+$", @title = "Mật khẩu không được chứa khoảng trắng" })
+                @Html.ValidationMessageFor(model => model.Password, "", new { @class = "field-error", @style = "display:block;" })
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Xác nhận mật khẩu</label>
+                <input type="password" id="confirm-password" class="form-input" placeholder="••••••••" required>
+                <div id="confirm-error" class="error-message" style="display:none;">Mật khẩu xác nhận không khớp.</div>
+            </div>
+
+            <button type="submit" class="btn-submit">Đăng Ký</button>
+        }
+
+        <div class="auth-switch">
+            Đã có tài khoản? <a href="@Url.Action("Login", "Account", new { area = "Customer" })">Đăng nhập ngay ></a>
+        </div>
+    </div>
+</div>
+
+<style>
+    .auth-wrapper {
+        min-height: calc(100vh - 70px);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-image: url("/content/image2/5-1.jpg");
+        background-size: cover;
+        background-position: center;
+        padding: 40px 20px;
+    }
+
+    .auth-card {
+        background-color: white;
+        border: 1px solid #e2e8f0;
+        width: 100%;
+        max-width: 440px;
+        padding: 40px;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+        border-radius: 12px;
+    }
+
+    .auth-title {
+        color: #111827;
+        font-size: 22px;
+        font-weight: 700;
+        text-align: center;
+        margin-bottom: 25px;
+        letter-spacing: -0.5px;
+    }
+
+    /* Ẩn validation summary khi không có lỗi */
+    .validation-summary-valid {
+        display: none !important;
+    }
+
+    .alert-error-msg {
+        background-color: #fee2e2;
+        color: #dc2626;
+        font-size: 13px;
+        padding: 12px 15px;
+        border-radius: 6px;
+        margin-bottom: 20px;
+        list-style: none;
+        border: 1px solid #fecaca;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-label {
+        display: block;
+        font-size: 12px;
+        text-transform: uppercase;
+        color: #374151;
+        margin-bottom: 8px;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+    }
+
+    .form-input {
+        width: 100%;
+        background-color: #fafafa;
+        border: 1px solid #d1d5db;
+        padding: 12px 16px;
+        color: #111827;
+        font-size: 14px;
+        border-radius: 6px;
+        outline: none;
+        transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+        .form-input:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+    .error-message, .field-error {
+        color: #dc2626;
+        font-size: 12px;
+        margin-top: 5px;
+    }
+
+    .btn-submit {
+        width: 100%;
+        background-color: #0f172a;
+        color: white;
+        font-weight: 700;
+        text-transform: uppercase;
+        padding: 14px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 14px;
+        letter-spacing: 0.5px;
+        transition: background-color 0.2s;
+        margin-top: 10px;
+    }
+
+        .btn-submit:hover {
+            background-color: #2563eb;
+        }
+
+    .auth-switch {
+        text-align: center;
+        margin-top: 24px;
+        font-size: 13px;
+        color: #4b5563;
+    }
+
+        .auth-switch a {
+            color: #2563eb;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+            .auth-switch a:hover {
+                text-decoration: underline;
+            }
+</style>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#signup-form').on('submit', function (e) {
+                var password = $('#Password').val();
+                var confirmPassword = $('#confirm-password').val();
+
+                if (password !== confirmPassword) {
+                    $('#confirm-error').show();
+                    $('#confirm-password').focus();
+                    e.preventDefault();
+                } else {
+                    $('#confirm-error').hide();
+                }
+            });
+        });
+    </script>
+}

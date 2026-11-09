@@ -1,0 +1,178 @@
+﻿@model IEnumerable<BE1.Models.Customer>
+
+@{
+    ViewBag.Title = "Quản lý khách hàng";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml"; // Hoặc layout admin của bạn
+}
+
+<style>
+    .customer-container {
+        padding: 20px;
+        background: #fff;
+        border-radius: 6px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        margin: 20px auto;
+        max-width: 1200px;
+    }
+
+    .customer-header {
+        background-color: #d4edda;
+        color: #155724;
+        padding: 15px 20px;
+        font-size: 22px;
+        font-weight: bold;
+        border-radius: 4px;
+        margin-bottom: 20px;
+    }
+
+    .btn-create {
+        background-color: #28a745;
+        color: white;
+        padding: 8px 16px;
+        border-radius: 4px;
+        text-decoration: none;
+        display: inline-block;
+        margin-bottom: 15px;
+        font-weight: 500;
+    }
+
+        .btn-create:hover {
+            background-color: #218838;
+            color: white;
+            text-decoration: none;
+        }
+
+    .table-custom {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 20px;
+    }
+
+        .table-custom th {
+            background-color: #d4edda;
+            color: #155724;
+            padding: 12px 15px;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 2px solid #c3e6cb;
+        }
+
+        .table-custom td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #dee2e6;
+            vertical-align: middle;
+            color: #333;
+        }
+
+        .table-custom tr:hover {
+            background-color: #f8f9fa;
+        }
+
+    .avatar-img {
+        width: 45px;
+        height: 45px;
+        object-fit: cover;
+        border-radius: 50%;
+        border: 1px solid #ddd;
+    }
+
+    .badge-role {
+        padding: 5px 10px;
+        border-radius: 12px;
+        font-size: 12px;
+        font-weight: bold;
+    }
+
+    .badge-admin {
+        background-color: #cce5ff;
+        color: #004085;
+    }
+
+    .badge-super {
+        background-color: #f8d7da;
+        color: #721c24;
+    }
+
+    .action-links a {
+        margin-right: 8px;
+        text-decoration: none;
+        font-weight: 500;
+    }
+
+    .action-edit {
+        color: #007bff;
+    }
+
+    .action-details {
+        color: #17a2b8;
+    }
+
+    .action-delete {
+        color: #dc3545;
+    }
+
+    .action-links a:hover {
+        text-decoration: underline;
+    }
+</style>
+
+<div class="customer-container">
+    <div class="customer-header">
+        QUẢN LÝ TÀI KHOẢN ADMIN & SUPER ADMIN
+    </div>
+
+    <p>
+        @Html.ActionLink("Thêm mới quản trị viên", "Create", null, new { @class = "btn-create" })
+    </p>
+
+    <table class="table-custom">
+        <tr>
+            <th>Mã KH</th>
+            <th>Họ và tên</th>
+            <th>Tên đăng nhập</th>
+            <th>Địa chỉ Email</th>
+            <th>Hình ảnh</th>
+            <th>Quyền hạn</th>
+            <th>Trạng thái</th>
+            <th>Thao tác</th>
+        </tr>
+
+        @foreach (var item in Model.Where(m => m.Role == "Admin" || m.Role == "SuperAdmin" || m.Role == "1" || m.Role == "2"))
+        {
+            <tr>
+                <td>@item.CustomerID</td>
+                <td><strong>@item.CustomerName</strong></td>
+                <td>@item.Username</td>
+                <td>@item.CustomerEmail</td>
+                <td>
+                    @if (!string.IsNullOrEmpty(item.CustomerImage))
+                    {
+                        <img src="@item.CustomerImage" class="avatar-img" />
+                    }
+                    else
+                    {
+                        <span class="text-muted">Chưa có ảnh</span>
+                    }
+                </td>
+                <td>
+                    @if (item.Role == "Admin" || item.Role == "1")
+                    {
+                        <span class="badge-role badge-admin">Admin</span>
+                    }
+                    else
+                    {
+                        <span class="badge-role badge-super">Super Admin</span>
+                    }
+                </td>
+                <td>
+                    @(item.IsActive == true ? "Hoạt động" : "Khóa")
+                </td>
+                <td class="action-links">
+                    @Html.ActionLink("Sửa", "Edit", new { id = item.CustomerID }, new { @class = "action-edit" }) |
+                    @Html.ActionLink("Chi tiết", "Details", new { id = item.CustomerID }, new { @class = "action-details" }) |
+                    @Html.ActionLink("Xóa", "Delete", new { id = item.CustomerID }, new { @class = "action-delete" })
+                </td>
+            </tr>
+        }
+    </table>
+</div>

@@ -1,0 +1,17 @@
+﻿@model BE1.Models.Order
+
+@{
+    ViewBag.Title = "Chi tiết hóa đơn #" + (Model != null ? Model.OrderID : 0);
+    Layout = "~/Areas/Customer/Views/Shared/_CustomerLayout.cshtml";
+}
+
+<div style="max-width: 900px; margin: 40px auto; padding: 0 15px;">
+    <div style="margin-bottom: 20px;">
+        <a href="@Url.Action("OrderHistory", "Order", new { area = "Customer" })" style="text-decoration: none; color: #2b78a2; font-weight: 600; font-size: 14px;">
+            <i class="fa-solid fa-arrow-left"></i> Quay lại lịch sử đơn hàng
+        </a>
+    </div>
+
+    <!-- TÁI SỬ DỤNG CHUNG PARTIAL VIEW CHI TIẾT ĐƠN HÀNG -->
+    @Html.Partial("~/Areas/Customer/Views/Shared/_OrderDetailContent.cshtml", Model)
+</div>

@@ -1,0 +1,52 @@
+﻿@model BE1.Models.Product
+
+@{
+    ViewBag.Title = "Chi tiết sản phẩm";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<style>
+    h2 {
+        color: #333;
+        font-weight: bold;
+        margin-bottom: 20px;
+    }
+
+    p > a {
+        padding: 8px 16px;
+        border-radius: 4px;
+        color: white;
+        text-decoration: none;
+        font-weight: 500;
+        display: inline-block;
+        margin-right: 5px;
+    }
+
+    
+        p > a[href*="Edit"] {
+            background-color: #337ab7;
+        }
+
+            p > a[href*="Edit"]:hover {
+                background-color: #286090;
+            }
+
+        /* Nút Quay lại danh sách (Back to List) - Màu xanh đậm/lam */
+        p > a[href*="Index"] {
+            background-color: #2e6da4;
+        }
+
+            p > a[href*="Index"]:hover {
+                background-color: #204d74;
+            }
+</style>
+
+<h2>CHI TIẾT SẢN PHẨM</h2>
+
+<!-- Nhúng Partial View hiển thị bố cục chi tiết sản phẩm -->
+@Html.Partial("_ProductDetailPartial", Model)
+
+<p>
+    @Html.ActionLink("Sửa", "Edit", new { id = Model.ProductID })
+    @Html.ActionLink("Quay lại danh sách", "Index")
+</p>

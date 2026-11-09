@@ -1,0 +1,49 @@
+﻿@model BE1.Models.Order
+
+@{
+    ViewBag.Title = "Xác nhận đơn hàng";
+    Layout = "~/Areas/Customer/Views/Shared/_CustomerLayout.cshtml";
+}
+
+<div style="max-width: 700px; margin: 40px auto; background: #fff; border-radius: 12px; padding: 40px; box-shadow: 0 4px 16px rgba(0,0,0,0.05); text-align: center;">
+    <div style="font-size: 55px; color: #10b981; margin-bottom: 15px;">
+        <i class="fa-solid fa-circle-check"></i>
+    </div>
+    <h1 style="font-size: 24px; font-weight: 750; color: #111; margin-bottom: 8px;">Đặt hàng thành công!</h1>
+    <p style="color: #6b7280; font-size: 14px; margin-bottom: 25px;">Cảm ơn bạn đã mua hàng tại Lubu Store. Đơn hàng của bạn đã được ghi nhận vào hệ thống.</p>
+
+    <div style="text-align: left; background: #f9fafb; padding: 20px; border-radius: 10px; margin-bottom: 25px; border: 1px solid #e5e7eb;">
+        @if (Model != null)
+        {
+            <div style="font-size: 14px; font-weight: 700; color: #111; margin-bottom: 12px; border-bottom: 1px solid #e5e7eb; padding-bottom: 8px;">
+                Mã đơn hàng: #@Model.OrderID <span style="float: right; color: #6b7280; font-weight: normal;">Ngày: @string.Format("{0:dd/MM/yyyy HH:mm}", Model.OrderDate)</span>
+            </div>
+
+            if (Model.OrderDetails != null && Model.OrderDetails.Any())
+            {
+                foreach (var detail in Model.OrderDetails)
+                {
+                    decimal itemTotal = detail.UnitPrice * detail.Quantity;
+                    <div style="display: flex; justify-content: space-between; align-items: center; font-size: 14px; margin-bottom: 8px; color: #374151;">
+                        <span>@(detail.Product != null ? detail.Product.ProductName : "Sản phẩm") (x@detail.Quantity)</span>
+                        <strong style="color: #111;">@string.Format("{0:N0} ₫", itemTotal)</strong>
+                    </div>
+                }
+            }
+
+            <div style="border-top: 1px solid #e5e7eb; margin-top: 12px; padding-top: 12px; display: flex; justify-content: space-between; font-size: 16px; font-weight: 800; color: #dc2626;">
+                <span>Tổng cộng:</span>
+                <span>@string.Format("{0:N0} ₫", Model.TotalAmount)</span>
+            </div>
+        }
+        else
+        {
+            <p style="text-align:center; color:#6b7280;">Không tìm thấy thông tin đơn hàng.</p>
+        }
+    </div>
+
+    <div style="display: flex; gap: 15px; justify-content: center;">
+        <a href="@Url.Action("ProductList", "Home1", new { area = "Customer" })" style="background: #2563eb; color: #fff; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 700; font-size: 14px;">Tiếp tục mua sắm</a>
+        <a href="@Url.Action("OrderHistory", "Order", new { area = "Customer" })" style="background: #f3f4f6; color: #374151; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 700; font-size: 14px; border: 1px solid #d1d5db;">Xem lịch sử mua hàng</a>
+    </div>
+</div>
